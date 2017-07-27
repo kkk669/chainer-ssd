@@ -125,7 +125,7 @@ def _mirror(image, boxes):
 
 
 def preproc_for_test(image, insize, mean):
-    np_array = image{:, :, ::-1].copy()
+    np_array = image[:, :, ::-1].copy()
     pil_img = Image.fromarray(np_array)
     pil_img = pil_img.resize((insize, insize), Image.ANTIALIAS)
     np_array = np.array(pil_img)

@@ -1,4 +1,5 @@
-import cv2
+#import cv2
+from PIL import Image
 import numpy as np
 import os
 import xml.etree.ElementTree as ET
@@ -42,9 +43,12 @@ class VOCDataset(object):
         return self.images[i]
 
     def image(self, i):
-        return cv2.imread(
-            os.path.join(self.root, 'JPEGImages', self.images[i] + '.jpg'),
-            cv2.IMREAD_COLOR)
+        pil_img = Image.open(os.path.join(self.root, 'JPEGImages', self.images[i] + '.jpg')).convert('RGB')
+        np_array = np.array(pil_img)
+        return np_array[:, :, ::-1].copy()
+        #return cv2.imread(
+        #    os.path.join(self.root, 'JPEGImages', self.images[i] + '.jpg'),
+        #    cv2.IMREAD_COLOR)
 
     def annotations(self, i):
         tree = ET.parse(os.path.join(

@@ -1,7 +1,8 @@
 #! /usr/bin/env python3
 
 import argparse
-import cv2
+#import cv2
+from PIL import Image
 import matplotlib.pyplot as plot
 import numpy as np
 
@@ -30,7 +31,10 @@ if __name__ == '__main__':
 
     multibox_encoder = MultiBoxEncoder(model)
 
-    src = cv2.imread(args.image, cv2.IMREAD_COLOR)
+    src = Image.open(args.image).convert('RGB')
+    src = np.array(src)
+    src = src[:, :, ::-1].copy()
+    #src = cv2.imread(args.image, cv2.IMREAD_COLOR)
     image = preproc_for_test(src, model.insize, model.mean)
 
     loc, conf = model(image[np.newaxis])
@@ -47,6 +51,9 @@ if __name__ == '__main__':
         box[:2] *= src.shape[1::-1]
         box[2:] *= src.shape[1::-1]
         box = box.astype(int)
+        
+        label = label[0]
+        score = score[0]
 
         print(label + 1, score, *box)
 

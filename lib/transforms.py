@@ -1,4 +1,5 @@
-import cv2
+#import cv2
+from PIL import Image
 import numpy as np
 import random
 
@@ -124,7 +125,12 @@ def _mirror(image, boxes):
 
 
 def preproc_for_test(image, insize, mean):
-    image = cv2.resize(image, (insize, insize))
+    np_array = image{:, :, ::-1].copy()
+    pil_img = Image.fromarray(np_array)
+    pil_img = pil_img.resize((insize, insize), Image.ANTIALIAS)
+    np_array = np.array(pil_img)
+    image = np_array[:, :, ::-1].copy()
+    #image = cv2.resize(image, (insize, insize))
     image = image.astype(np.float32)
     image -= mean
     return image.transpose(2, 0, 1)

@@ -2,6 +2,7 @@ import numpy as np
 import re
 import sys
 
+from chainer import Link
 import chainer.links.caffe.caffe_function as caffe
 
 from lib.ssd import _Normalize
@@ -50,7 +51,7 @@ class _CaffeFunction(caffe.CaffeFunction):
         super().__init__(model_path)
 
     def __setattr__(self, name, link):
-        if self.within_init_scope and name != '_within_init_scope':
+        if self.within_init_scope and instanceof(link, Link):
             new_name = _rename(name)
             if self.verbose:
                 print('{:s} -> {:s}'.format(name, new_name), file=sys.stderr)

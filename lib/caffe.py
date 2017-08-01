@@ -50,14 +50,14 @@ class _CaffeFunction(caffe.CaffeFunction):
                 file=sys.stderr)
         super().__init__(model_path)
 
-    def __setattr__(self, name, link):
-        if self.within_init_scope and isinstance(link, Link):
+    def __setattr__(self, name, value):
+        if self.within_init_scope and isinstance(value, Link):
             new_name = _rename(name)
             if self.verbose:
                 print('{:s} -> {:s}'.format(name, new_name), file=sys.stderr)
         else:
             new_name = name
-        super().__setattr__(new_name, link)
+        super().__setattr__(new_name, value)
 
     @caffe._layer('Normalize', None)
     def _setup_normarize(self, layer):

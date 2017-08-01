@@ -13,30 +13,30 @@ def _rename(name):
         i, j = map(int, m.groups())
         if i >= 6:
             i += 2
-        return 'conv{:d}_{:d}'.format(i, j), True
+        return 'conv{:d}_{:d}'.format(i, j)
 
     m = re.match(r'^fc([67])$', name)
     if m:
-        return 'conv{:d}'.format(int(m.group(1))), True
+        return 'conv{:d}'.format(int(m.group(1)))
 
     if name == r'conv4_3_norm':
-        return 'norm4', True
+        return 'norm4'
 
     m = re.match(r'^conv4_3_norm_mbox_(loc|conf)$', name)
     if m:
-        return '{:s}/0'.format(m.group(1)), True
+        return '{:s}/0'.format(m.group(1))
 
     m = re.match(r'^fc7_mbox_(loc|conf)$', name)
     if m:
-        return ('{:s}/1'.format(m.group(1))), True
+        return ('{:s}/1'.format(m.group(1)))
 
     m = re.match(r'^conv(\d+)_2_mbox_(loc|conf)$', name)
     if m:
         i, type_ = int(m.group(1)), m.group(2)
         if i >= 6:
-            return '{:s}/{:d}'.format(type_, i - 4), True
+            return '{:s}/{:d}'.format(type_, i - 4)
 
-    return name, False
+    return name
 
 
 class _CaffeFunction(caffe.CaffeFunction):
@@ -50,9 +50,12 @@ class _CaffeFunction(caffe.CaffeFunction):
         super().__init__(model_path)
 
     def __setattr__(self, name, link):
-        new_name, match = _rename(name)
-        if match and hasattr(self, 'verbose') and self.verbose:
-            print('{:s} -> {:s}'.format(name, new_name), file=sys.stderr)
+        if self.within_init_scope and name != '_within_init_scope':
+            new_name = _rename(name)
+            if self.verbose:
+                print('{:s} -> {:s}'.format(name, new_name), file=sys.stderr)
+        else:
+            new_name = name
         super().__setattr__(new_name, link)
 
     @caffe._layer('Normalize', None)

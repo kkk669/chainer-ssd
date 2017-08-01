@@ -51,7 +51,7 @@ class _CaffeFunction(caffe.CaffeFunction):
         super().__init__(model_path)
 
     def __setattr__(self, name, link):
-        if self.within_init_scope and instanceof(link, Link):
+        if self.within_init_scope and isinstance(link, Link):
             new_name = _rename(name)
             if self.verbose:
                 print('{:s} -> {:s}'.format(name, new_name), file=sys.stderr)
